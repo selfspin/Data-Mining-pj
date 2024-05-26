@@ -18,6 +18,12 @@ def load_data():
     return raw_data
 
 
+def combine_career(data):
+    '''
+    
+    '''
+
+
 def partial_by_income(data: pd.DataFrame):
     '''
     Divide the data into two groups by whether one has the income.
