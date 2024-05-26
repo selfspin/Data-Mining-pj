@@ -12,7 +12,7 @@ def preprocess_raw_for_modeling(dating:pd.DataFrame):
     # 字段转化
     dating['samerace'] = dating['samerace'].astype('int')   # 是否同种族--转化为01整型变量
     for number in [3.0, 5.0, 6.0, 7.0, 8.0]:
-        dating['met'].replace(number,0, inplace =True)    # 见过次数--转化为是否见过01变量
+        dating['met'] = dating['met'].replace(number, 0)  # 是否见过--转化为是否见过01变量
 
     # 字段创建
     dating['age_diff'] = dating['age'] - dating['age_o']
