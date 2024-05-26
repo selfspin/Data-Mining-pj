@@ -1,4 +1,5 @@
 import os
+import json
 import numpy as np
 import pandas as pd
 
@@ -18,10 +19,28 @@ def load_data():
     return raw_data
 
 
-def combine_career(data):
-    '''
+def combine_career(data: pd.DataFrame, json_path="../data/career.json"):
     
-    '''
+    with open(json_path, "r", encoding="utf-8") as f:
+        career = json.load(f)
+        career_category = career.keys()
+    
+    def categorize(career_str):
+        for category in career_category:
+            if career_str in career[category]:
+                return category
+        import pdb; pdb.set_trace()
+        raise NotImplementedError 
+    
+    # Naive loop.
+    row_n = data.shape[0]
+    for idx in range(row_n):
+        if data.loc[idx]["career"] is np.nan:
+            data.loc[idx]["career"] = "nan"
+        else:
+            data.iloc[idx, 4] = categorize(data.loc[idx]["career"])
+    
+    return data
 
 
 def partial_by_income(data: pd.DataFrame):
@@ -85,6 +104,7 @@ if __name__ == '__main__':
     
     # 1. Load the raw data.
     data = load_data()
+    data = combine_career(data, json_path="./data/career.json")
     # 2. Divide the data into two parts: with income and w/o income.
     no_income_data, income_data = partial_by_income(data)
     # 3. Drop the na records.
