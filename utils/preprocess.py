@@ -18,19 +18,71 @@ def load_data():
     return raw_data
 
 
+def partial_by_income(data: pd.DataFrame):
+    '''
+    Divide the data into two groups by whether one has the income.
+    The "income" attr of individuals who do not have income will be set to 0.
+    '''
+    no_income_data = data[data["income"].isna()]
+    no_income_data = no_income_data.fillna(value={"income": 0.})
+    income_data = data[~data["income"].isna()]
+    return no_income_data, income_data
+
+
 def truncate_nan(data: pd.DataFrame):
-    data.dropna()
+    raw_n_rows = data.shape[0]
+    data = data.dropna().reset_index(drop=True)
+    new_n_rows = data.shape[0]
+    print("Have truncated nan. nrows %d -> %d" %(raw_n_rows, new_n_rows))
     return data
     
 
 def aggregate(data: pd.DataFrame):
-    pass
+    '''
+    Aggregate records by the first 5 columns.
+    The other attrs will be set to the mean.
+    '''
+    def match(row1, row2):
+        return (row1[:5] == row2[:5]).sum() == 5
 
-
+    def stack(row_list):
+        _row_list = [row[6:12] for row in row_list]
+        _df = pd.DataFrame(_row_list)
+        _df = _df.mean(axis=0)
+        _head_df = row_list[0][:5]
+        _df = pd.concat([_head_df, _df], axis=0)
+        return _df
+    
+    # Naive O(n^2) approach.
+    new_data = []
+    temp_data = []
+    row_n = data.shape[0]
+    
+    temp_row = data.loc[0]
+    for idx in range(row_n):
+        
+        cur_row = data.loc[idx]
+        if match(temp_row, cur_row):
+            temp_data.append(cur_row.copy())
+        else:
+            new_data.append(stack(temp_data))
+            temp_data = [cur_row.copy()]
+            
+        temp_row = data.loc[idx]
+        
+    return pd.DataFrame(new_data)
+        
 # And so on...
     
 
 if __name__ == '__main__':
     
+    # 1. Load the raw data.
     data = load_data()
+    # 2. Divide the data into two parts: with income and w/o income.
+    no_income_data, income_data = partial_by_income(data)
+    # 3. Drop the na records.
+    no_income_data, income_data = truncate_nan(no_income_data), truncate_nan(income_data)
+    # 4. Aggregate the data.
+    aggr_no_income_data, aggr_income_data = aggregate(no_income_data), aggregate(income_data)
     import pdb; pdb.set_trace()
