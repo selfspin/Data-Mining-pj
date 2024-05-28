@@ -86,6 +86,21 @@ def career_stats(data: pd.DataFrame):
     plt.savefig("./output/career_stat.png")
 
 
+def score_stats(data: pd.DataFrame):
+    
+    score_df = data[["attr", "sinc", "intel", "fun", "amb", "shar"]]
+    
+    sns.heatmap(
+        score_df.corr(),
+        annot=True,
+        cmap="YlOrRd",
+        fmt=".2f"
+    )
+    
+    plt.title("Score Corr Matrix")
+    # plt.show()
+    plt.savefig("./output/score_stat.pdf")
+
 
 if __name__ == '__main__':
     
@@ -103,3 +118,4 @@ if __name__ == '__main__':
     age_stats(aggr_data)
     career_stats(aggr_data)
     income_stats(aggr_income_data)
+    score_stats(aggr_data)
