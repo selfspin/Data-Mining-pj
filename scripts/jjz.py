@@ -6,6 +6,7 @@ import seaborn as sns
 from utils.preprocess import *
 
 features_name = ["gender", "age", "income", "goal", "career"]
+scores_name = ["attr", "sinc", "intel", "fun", "amb", "shar"]
 
 
 # 基本特征对最终得分的箱线图
@@ -73,6 +74,36 @@ def base_feature_boxplot(noincome_data: pd.DataFrame, income_data: pd.DataFrame)
         plt.savefig(f'output/boxplots/like-{feature_name}.png', format='png', dpi=300)
 
 
+# 各评分对最终评分的影响
+def score_boxplot(noincome_data: pd.DataFrame, income_data: pd.DataFrame):
+    dic = {"attr": "attractiveness",
+           "sinc": "sincerity",
+           "intel": "intelligence",
+           "fun": "fun",
+           "amb": "ambitiousness",
+           "shar": "shared interests"}
+
+    for idx, score_name in enumerate(scores_name):
+        feature = np.concatenate([income_data[score_name].to_numpy(), noincome_data[score_name].to_numpy()]).astype(int)
+        like = np.concatenate([income_data['like'].to_numpy(), noincome_data['like'].to_numpy()])
+
+        data = pd.DataFrame({
+            'Feature': feature,
+            'Like': like
+        })
+
+        plt.figure(figsize=(8, 6))
+        sns.boxplot(x='Feature', y='Like', data=data, order=sorted(np.unique(feature)))
+
+        # 添加标题和标签
+        plt.title('Box Plot of Like by Feature')
+        plt.xlabel(dic[score_name])
+        plt.ylabel('like')
+
+        # 显示图形
+        plt.savefig(f'output/boxplots/like-{score_name}.png', format='png', dpi=300)
+
+
 if __name__ == "__main__":
     # 1. Load the raw data.
     data = load_data()
@@ -85,3 +116,4 @@ if __name__ == "__main__":
     aggr_no_income_data, aggr_income_data = aggregate(no_income_data), aggregate(income_data)
 
     base_feature_boxplot(aggr_no_income_data, aggr_income_data)
+    score_boxplot(no_income_data, income_data)
