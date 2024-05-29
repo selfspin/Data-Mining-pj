@@ -12,6 +12,29 @@ def base_feature_boxplot(noincome_data: pd.DataFrame, income_data: pd.DataFrame)
     for idx, feature_name in enumerate(features_name):
         if feature_name == 'income':
             feature = income_data[feature_name].to_numpy()
+            like = income_data['like'].to_numpy()
+        else:
+            feature = np.concatenate([income_data[feature_name].to_numpy(), noincome_data[feature_name].to_numpy()])
+            like = np.concatenate([income_data['like'].to_numpy(), noincome_data['like'].to_numpy()])
+
+        data = pd.DataFrame({
+            'Feature': feature,
+            'Like': like
+        })
+
+        plt.figure(figsize=(8, 6))
+        sns.boxplot(x='Feature', y='Like', data=data)
+
+        # 添加标题和标签
+        plt.title('Box Plot of Like by Feature')
+        plt.xlabel(feature_name)
+        plt.ylabel('like')
+
+        # 显示图形
+        plt.savefig(f'output/boxplots/like-{feature_name}.png', format='png', dpi=300)
+
+
+
 
 
 
