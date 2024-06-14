@@ -48,7 +48,7 @@ def income_stats(data: pd.DataFrame):
     filtered_df['career'] = pd.Categorical(filtered_df['career'], categories=top_careers_list, ordered=True)
     filtered_df.sort_values(by='career', inplace=True)
     
-    filtered_df.boxplot(column='income', by='career', figsize=(12, 8))
+    filtered_df.boxplot(column='income', by='career', figsize=(9, 5))
     plt.suptitle("")
     
     plt.title('Income Distribution by Career')
@@ -74,7 +74,7 @@ def career_stats(data: pd.DataFrame):
     
     grouped_df = filtered_df.groupby(['career', 'gender']).size().unstack()
     
-    grouped_df.plot(kind='bar', stacked=False, color=["pink", "C0"], figsize=(9, 6))
+    grouped_df.plot(kind='bar', stacked=False, color=["pink", "C0"], figsize=(6, 4))
     plt.legend(title='Gender', labels=['Female', 'Male'])
     
     plt.xticks(rotation=30)
@@ -115,7 +115,7 @@ if __name__ == '__main__':
     aggr_no_income_data, aggr_income_data = aggregate(no_income_data), aggregate(income_data)
     aggr_data = pd.concat([aggr_no_income_data, aggr_income_data], axis=0)
     
-    age_stats(aggr_data)
-    career_stats(aggr_data)
+    # age_stats(aggr_data)
+    # career_stats(aggr_data)
     income_stats(aggr_income_data)
-    score_stats(aggr_data)
+    # score_stats(aggr_data)

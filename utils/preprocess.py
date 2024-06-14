@@ -70,7 +70,7 @@ def aggregate(data: pd.DataFrame):
         return (row1[:5] == row2[:5]).sum() == 5
 
     def stack(row_list):
-        _row_list = [row[6:13] for row in row_list]
+        _row_list = [row[5:13] for row in row_list]
         _df = pd.DataFrame(_row_list)
         _df = _df.mean(axis=0)
         _head_df = row_list[0][:5]
